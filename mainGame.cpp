@@ -202,8 +202,8 @@ string weaponChoice()
 void shop()
 {
     string buyRequest;
-    cout << "Welcome to the shop!  What would you like to buy?" << endl;
-    cout << endl << "You have " << gold << " gold!" endl;
+    cout << "Welcome to the shop!  What would you like to buy?" << endl << endl;
+    cout << "You have " << gold << " gold!" << endl;
     drawLine(15);
     //Shop buy conditions
     if (!knife)
