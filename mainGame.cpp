@@ -24,13 +24,14 @@ bool shield = false;
 bool mythrillShield = false;
 
 bool knifeBuy, hatchetBuy, marshBuy, swordBuy, pistolBuy, shotgunBuy, mgBuy, sniperBuy, onlySwordBuy, shieldBuy, mShieldBuy;
-int pBullet, sgBullet, mgBullet, snBullet;
+int bullets;
 
 //Essentials
 bool playing = true;
 
 //-- Start Code --//
 
+//Draws organization line
 void drawLine(int length)
 {
     for (int i = 1; i <= length; i++)
@@ -47,6 +48,41 @@ int random(int max)
     return 1+rand()%max;
 }
 
+//Determines loot
+void drops(string eType)
+{
+    int r = random(500);
+    
+    if (r == 1)
+    {
+        if (onlySword)
+        {
+            cout << "You found The Only Sword!" << endl;
+        }
+        else
+        {
+            cout << "You found a rare sword and sold it for 1,000 gold!" << endl;
+            gold += 1000;
+        }
+    }
+    else if (r >= 400)
+    {
+        cout << "You found some bullets!" << endl;
+        bullets += random(25);
+    }
+    else if (r >= 300)
+    {
+        cout << "You found a large hoard of food!!!" << endl;
+        food += 15;
+    }
+    else if (r >= 2)
+    {
+        cout << "You found some food!" << endl;
+        food += 5;
+    }
+}
+
+//Asks for weapon of choice
 string weaponChoice()
 {
     string choice;
@@ -162,10 +198,12 @@ string weaponChoice()
     
 }
 
+//Shop function (BEWARE)
 void shop()
 {
     string buyRequest;
     cout << "Welcome to the shop!  What would you like to buy?" << endl;
+    cout << endl << "You have " << gold << " gold!" endl;
     drawLine(15);
     //Shop buy conditions
     if (!knife)
@@ -392,6 +430,7 @@ void shop()
     }
 }
 
+//Determines damage you deal based on weapon
 int damageDealt(string weapon)
 {
     int damage;
@@ -458,21 +497,36 @@ int damageDealt(string weapon)
     }
 }
 
+//Determines Enemy Type
+//BETA -- WORK ON THIS
 string chooseEnemyType(int uHP)
 {
-    return "Kitten";
+    if (uHP < 20)
+    {
+        return "Kitten";
+    }
 }
 
+//Determines Enemy HP
+//BETA -- WORK ON THIS
 int chooseEnemyHP(int uHP, string eType)
 {
-    return 10;
+    int hp;
+    if (eType == "Kitten")
+    {
+        hp = random(5);
+        hp += 10;
+        return hp;
+    }
 }
 
+//Determines Enemy Damage Dealt
+//BETA -- WORK ON THIS (after eType & eHP)
 int enemyDamage(string eType, int eHP)
 {
     if (eType == "Kitten")
     {
-        return eHP/5;
+        return eHP/2;
     }
 }
 
@@ -491,8 +545,12 @@ bool realtime(int uHP)
     int eHP = chooseEnemyHP(uHP, eType);
     cout << "The " << eType << " appered.  It has " << eHP << " health." << endl;
     
+    battle = true;
+    
     while (battle)
-    {    
+    {
+        choice ="";
+        
         while (choice != "run" && choice != "attack" && choice != "eat")
         {
             cout << "Would you like to attack, run, or eat?" << endl;
@@ -501,10 +559,13 @@ bool realtime(int uHP)
         if (choice == "attack")
         {
             eHP -= damageDealt(weapon);
+            //cout << eHP << endl;
         }
         else if (choice == "run")
         {
-            cout << "Could not escape!" << endl;
+            cout << "You got away, barely" << endl;
+            battle = false;
+            break;
         }
         else if (choice == "eat")
         {
@@ -512,7 +573,7 @@ bool realtime(int uHP)
             {
                 food -= 1;
                 uHP += 5;
-                cout << "You ate a piece of food.  You now have " << food << " food and " << eHP << " HP" << endl;
+                cout << "You ate a piece of food.  You now have " << food << " food and " << uHP << " HP" << endl;
             }
             else
             {
@@ -521,22 +582,28 @@ bool realtime(int uHP)
         }
         uHP -= enemyDamage(eType, eHP);
         
+        cout << "You have " << uHP << " HP left and your opponent has " << eHP << " HP left." << endl;
+        
         if (uHP <= 0)
         {
-            return false;
             cout << "You have been defeated by the enemy!" << endl;
+            return false;
         }
         else if (eHP <= 0)
         {
-            return true;
             cout << "You have defeated the enemy!" << endl;
+            drops(eType);
+            return true;
         }
     }
 }
 
+//MAIN FUNCTION
 int main()
 {
     string choice, oChoice;
+    
+    cout << "Welcome, remember, all commands must be in lower case!!!" << endl;
     
     while(playing)
     {
