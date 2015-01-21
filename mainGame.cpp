@@ -7,7 +7,7 @@ using namespace std;
 //Declaring Global Variables
 
 //Data Values
-int gold, userHP = 15, food = 5;
+int gold, userHP = 15, food = 5, life = 100;
 
 //Weapon bools
 bool fist = true;
@@ -607,7 +607,7 @@ int main()
     
     while(playing)
     {
-        cout << "Would you rather battle, shop, or finish?" << endl;
+        cout << "Would you rather battle, shop, display, or finish?" << endl;
         cin >> choice;
         
         if (choice == "battle")
@@ -626,6 +626,13 @@ int main()
             {
                 playing = false;
             }
+        }
+        else if (choice == "display")
+        {
+            cout << "Gold - " << gold << endl;
+            cout << "HP - " << userHP << endl;
+            cout << "Food - " << food << endl;
+            cout << "Bullets - " << bullets << endl;
         }
         else
         {
